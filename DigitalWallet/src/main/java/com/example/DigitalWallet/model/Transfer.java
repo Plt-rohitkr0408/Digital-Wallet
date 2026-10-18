@@ -29,6 +29,9 @@ public class Transfer {
     private BigDecimal amount;
     private LocalDateTime sendAt;
 
+    @Column(name = "idempotency_key" ,  nullable = false ,  length = 20, unique = true)
+    private String idempotencyKey;
+
     @PrePersist
     public void setSendAt(){
         this.sendAt = LocalDateTime.now();

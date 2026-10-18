@@ -10,4 +10,5 @@ import java.math.BigDecimal;
 public class TransferRequest {
     private Long receiverId;
     private BigDecimal amount;
+    private String idempotencyKey;
 }

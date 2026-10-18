@@ -1,7 +1,5 @@
 package com.example.DigitalWallet.service.Impl;
 
-
-
 import com.example.DigitalWallet.model.LadgerEntity;
 import com.example.DigitalWallet.model.LadgerType;
 import com.example.DigitalWallet.model.Transfer;
@@ -25,26 +23,54 @@ public class LedgerService {
     }
 
     @Transactional
-    public LadgerEntity createLedgerEntry(
-            Wallet wallet,
-            Transfer transfer,
-            LadgerType entryType,
-            BigDecimal amount) {
-
-        if (amount == null || amount.signum() <= 0) {
-            throw new IllegalArgumentException(
-                    "Amount must be greater than zero");
+    public String startLedger(Wallet sender, Transfer transfer , Wallet receiver){
+        if(transfer.getAmount() == null || transfer.getAmount().signum() <=0){
+            throw new RuntimeException("Amount must be greater than zero");
         }
 
-        LadgerEntity entry = new LadgerEntity();
-        entry.setWallet(wallet);
-        entry.setTransfer(transfer);
-        entry.setLadgerType(entryType);
-        entry.setAmount(amount);
-        entry.setBalanceAfter(wallet.getBalance());
+        LadgerEntity senderLedgerEntry = new LadgerEntity();
+        senderLedgerEntry.setWallet(sender);
+        senderLedgerEntry.setAmount(transfer.getAmount());
+        senderLedgerEntry.setTransfer(transfer);
+        senderLedgerEntry.setLadgerType(LadgerType.DEBIT);
+        senderLedgerEntry.setBalanceAfter(sender.getBalance());
 
-        return ledgerEntryRepository.save(entry);
+        LadgerEntity receiverLedgerEntry = new LadgerEntity();
+        receiverLedgerEntry.setWallet(receiver);
+        receiverLedgerEntry.setAmount(transfer.getAmount());
+        receiverLedgerEntry.setTransfer(transfer);
+        receiverLedgerEntry.setLadgerType(LadgerType.CREDIT);
+        receiverLedgerEntry.setBalanceAfter(receiver.getBalance());
+
+        ledgerEntryRepository.save(senderLedgerEntry);
+        ledgerEntryRepository.save(receiverLedgerEntry);
+
+
+        return "Send and Receive Successfully";
+
     }
+
+//    @Transactional
+//    public LadgerEntity createLedgerEntry(
+//            Wallet wallet,
+//            Transfer transfer,
+//            LadgerType entryType,
+//            BigDecimal amount) {
+//
+//        if (amount == null || amount.signum() <= 0) {
+//            throw new IllegalArgumentException(
+//                    "Amount must be greater than zero");
+//        }
+//
+//        LadgerEntity entry = new LadgerEntity();
+//        entry.setWallet(wallet);
+//        entry.setTransfer(transfer);
+//        entry.setLadgerType(entryType);
+//        entry.setAmount(amount);
+//        entry.setBalanceAfter(wallet.getBalance());
+//
+//        return ledgerEntryRepository.save(entry);
+//    }
 
     @Transactional(readOnly = true)
     public Page<LadgerEntity> getEntriesByWalletId(

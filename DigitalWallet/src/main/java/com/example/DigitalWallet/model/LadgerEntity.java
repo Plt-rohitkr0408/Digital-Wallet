@@ -20,7 +20,7 @@ public class LadgerEntity {
     @JoinColumn(name = "wallet_id",nullable = false)
     private Wallet wallet;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "transfer_id", nullable = false)
     private Transfer transfer;
 
