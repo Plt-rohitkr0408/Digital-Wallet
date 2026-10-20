@@ -51,6 +51,8 @@ public class SecurityService {
                        auth.requestMatchers("/swagger-ui/index.html", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                .requestMatchers("/test/**").permitAll()
                                .requestMatchers("/api/users/register", "/api/users/login").permitAll()
+                               .requestMatchers("/api/auth/forgot-password",
+                                       "/api/auth/reset-password").permitAll()
 
                                .anyRequest().authenticated()
                        )

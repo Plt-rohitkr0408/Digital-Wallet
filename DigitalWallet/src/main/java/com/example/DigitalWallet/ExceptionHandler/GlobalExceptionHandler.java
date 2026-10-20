@@ -21,7 +21,19 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST,
                 LocalDateTime.now(),
                 message.getMessage(),
-                request.getPathInfo()
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> illegalArgumentException(IllegalArgumentException message ,  HttpServletRequest request){
+        ErrorResponse errorResponse = new ErrorResponse(
+                message.getCause().toString(),
+                HttpStatus.BAD_REQUEST,
+                LocalDateTime.now(),
+                message.getMessage(),
+                request.getRequestURI()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }

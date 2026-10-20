@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: digital-wallet-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: DigitalWalletDatabase
+      MYSQL_USER: digitalwallet
+      MYSQL_PASSWORD: digitalwallet
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot_password" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    container_name: docker-wallet-app
+    restart: always
+    ports:
+      - "9090:9090"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/DigitalWalletDatabase?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=digitalwallet
+      - SPRING_DATASOURCE_PASSWORD=digitalwallet
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  mysql_data:
